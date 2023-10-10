@@ -118,14 +118,13 @@ def main(argv):
             for src, trg in zip(sf, tf):
                 src, trg = src.rstrip(), trg.rstrip()
 
-                src_lang = TRG_LANGUAGE[args.src_lang][args.src_lang]
-                trg_lang = TRG_LANGUAGE[args.src_lang][args.trg_lang]
-
-                template = choice(TEMPLATES[args.src_lang])
-
-                if args.invert:
+                if not args.invert:
+                    trg_lang = TRG_LANGUAGE[args.src_lang][args.trg_lang]
+                    template = choice(TEMPLATES[args.src_lang])
+                else:
                     src, trg = trg, src
-                    src_lang, trg_lang = trg_lang, src_lang
+                    trg_lang = TRG_LANGUAGE[args.trg_lang][args.src_lang]
+                    template = choice(TEMPLATES[args.trg_lang])
 
                 print(template.format(
                     src=src,
