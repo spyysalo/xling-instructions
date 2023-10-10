@@ -8,32 +8,33 @@ from argparse import ArgumentParser
 
 
 # Default user and assistant token strings
-DEFAULT_USER_STR = '<|user|>'
-DEFAULT_ASST_STR = '<|assistant|>'
+DEFAULT_USER_START = '<|im_start|>user\n'
+DEFAULT_ASST_START = '<|im_start|>assistant\n'
+DEFAULT_END  = '<|im_end|>\n'
 
 # Templates by language
 TEMPLATES = {
     'eng': [
-        '{user}Translate into {trg_lang}: {src}\n{asst}{trg}\n'
+        '{user}Translate into {trg_lang}: {src}{end}{asst}{trg}{end}'
     ],
     'fin': [
-        '{user}Käännä {trg_tra}: {src}\n{asst}{trg}\n'
+        '{user}Käännä {trg_tra}: {src}{end}{asst}{trg}{end}'
     ],
     'swe': [
-        '{user}Översätt till {trg_lang}: {src}\n{asst}{trg}\n'
+        '{user}Översätt till {trg_lang}: {src}{end}{asst}{trg}{end}'
     ],
 }
 
 # Inverted templates by language
 INV_TEMPLATES = {
     'eng': [
-        '{user}Translate into {src_lang}: {trg}\n{asst}{src}\n'
+        '{user}Translate into {src_lang}: {trg}{end}{asst}{src}{end}'
     ],
     'fin': [
-        '{user}Käännä {src_tra}: {trg}\n{asst}{src}\n'
+        '{user}Käännä {src_tra}: {trg}{end}{asst}{src}{end}'
     ],
     'swe': [
-        '{user}Översätt till {src_lang}: {trg}\n{asst}{src}\n'
+        '{user}Översätt till {src_lang}: {trg}{end}{asst}{src}{end}'
     ],
 }
 
@@ -72,8 +73,9 @@ def argparser():
     ap.add_argument('src_file', help='Source language data (text lines)')
     ap.add_argument('trg_file', help='Target language data (text lines)')
     ap.add_argument('--invert', action='store_true', help='Generate TRG->SRC')
-    ap.add_argument('--user-str', default=DEFAULT_USER_STR)
-    ap.add_argument('--asst-str', default=DEFAULT_ASST_STR)
+    ap.add_argument('--user-str', default=DEFAULT_USER_START)
+    ap.add_argument('--asst-str', default=DEFAULT_ASST_START)
+    ap.add_argument('--end-str', default=DEFAULT_END)
     return ap
 
 
@@ -113,6 +115,7 @@ def main(argv):
                     trg_tra=trg_tra,
                     user=args.user_str,
                     asst=args.asst_str,
+                    end=args.end_str,
                 ))
 
 
