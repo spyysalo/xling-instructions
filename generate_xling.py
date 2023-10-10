@@ -14,57 +14,79 @@ DEFAULT_END  = '<|im_end|>\n'
 
 # Templates by language
 TEMPLATES = {
+    'dan': [
+        '{user}Oversæt til {trg_lang}: {src}{end}{asst}{trg}{end}'
+    ],
     'eng': [
         '{user}Translate into {trg_lang}: {src}{end}{asst}{trg}{end}'
     ],
     'fin': [
-        '{user}Käännä {trg_tra}: {src}{end}{asst}{trg}{end}'
+        '{user}Käännä {trg_lang}: {src}{end}{asst}{trg}{end}'
+    ],
+    'isl': [
+        '{user}Þýða á {trg_lang}: {src}{end}{asst}{trg}{end}'
+    ],
+    'nor': [
+        '{user}Oversett til {trg_lang}: {src}{end}{asst}{trg}{end}'
     ],
     'swe': [
         '{user}Översätt till {trg_lang}: {src}{end}{asst}{trg}{end}'
     ],
 }
 
-# Inverted templates by language
-INV_TEMPLATES = {
-    'eng': [
-        '{user}Translate into {src_lang}: {trg}{end}{asst}{src}{end}'
-    ],
-    'fin': [
-        '{user}Käännä {src_tra}: {trg}{end}{asst}{src}{end}'
-    ],
-    'swe': [
-        '{user}Översätt till {src_lang}: {trg}{end}{asst}{src}{end}'
-    ],
-}
 
-# Language names by source language
-LANGUAGE = {
+# Language names by source language in form required for target
+TRG_LANGUAGE = {
+    'dan': {
+        'dan': 'dansk',
+        'eng': 'engelsk',
+        'fin': 'finsk',
+        'isl': 'islandsk',
+        'nor': 'norsk',
+        'swe': 'svensk',
+    },
     'fin': {
-        'eng': 'englanti',
-        'fin': 'suomi',
-        'swe': 'ruotsi',
+        'dan': 'tanskaksi',
+        'eng': 'englanniksi',
+        'fin': 'suomeksi',
+        'isl': 'islanniksi',
+        'nor': 'norjaksi',
+        'swe': 'ruotsiksi',
     },
     'eng': {
+        'dan': 'Danish',
         'eng': 'English',
         'fin': 'Finnish',
+        'isl': 'Icelandic',
+        'nor': 'Norwegian',
         'swe': 'Swedish',
     },
+    'isl': {
+        'dan': 'dönsku',
+        'eng': 'ensku',
+        'fin': 'finnsku',
+        'isl': 'íslensku',
+        'nor': 'norsku',
+        'swe': 'sænsku',
+    },
+    'nor': {
+        'dan': 'dansk',
+        'eng': 'engelsk',
+        'fin': 'finsk',
+        'isl': 'islandsk',
+        'nor': 'norsk',
+        'swe': 'svensk',
+    },
     'swe': {
+        'dan': 'danska',
         'eng': 'engelska',
         'fin': 'finska',
+        'isl': 'isländska',
+        'nor': 'norska',
         'swe': 'svenska',
     },
 }
 
-# Translative forms of language by source language
-TRANSLATIVE = {
-    'fin': {
-        'eng': 'englanniksi',
-        'fin': 'suomeksi',
-        'swe': 'ruotsiksi',
-    }
-}
 
 def argparser():
     ap = ArgumentParser()
@@ -90,29 +112,25 @@ def main(argv):
     args = argparser().parse_args(argv[1:])
 
     assert args.src_lang in TEMPLATES, f'no templates for {args.src_lang}'
-    
+
     with xopen(args.src_file) as sf:
         with xopen(args.trg_file) as tf:
             for src, trg in zip(sf, tf):
                 src, trg = src.rstrip(), trg.rstrip()
 
-                src_lang = LANGUAGE[args.src_lang][args.src_lang]
-                trg_lang = LANGUAGE[args.src_lang][args.trg_lang]
-                src_tra = TRANSLATIVE.get(args.src_lang, {}).get(args.src_lang)
-                trg_tra = TRANSLATIVE.get(args.src_lang, {}).get(args.trg_lang)
+                src_lang = TRG_LANGUAGE[args.src_lang][args.src_lang]
+                trg_lang = TRG_LANGUAGE[args.src_lang][args.trg_lang]
 
-                if not args.invert:
-                    template = choice(TEMPLATES[args.src_lang])
-                else:
-                    template = choice(INV_TEMPLATES[args.src_lang])
+                template = choice(TEMPLATES[args.src_lang])
+
+                if args.invert:
+                    src, trg = trg, src
+                    src_lang, trg_lang = trg_lang, src_lang
 
                 print(template.format(
                     src=src,
                     trg=trg,
-                    src_lang=src_lang,
                     trg_lang=trg_lang,
-                    src_tra=src_tra,
-                    trg_tra=trg_tra,
                     user=args.user_str,
                     asst=args.asst_str,
                     end=args.end_str,
