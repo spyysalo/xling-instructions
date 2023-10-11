@@ -19,15 +19,11 @@ tar xf eng-fin.tar
 Generate
 
 ```
-python3 generate_xling.py eng fin data/release/v2023-09-26/eng-fin/train.{src,trg}.gz | head -n 4
+python3 generate_xling.py eng fin data/release/v2023-09-26/eng-fin/train.{src,trg}.gz | head -n 1
 ```
 
 Expected output:
 
 ```
-python3 generate_xling.py eng fin data/release/v2023-09-26/eng-fin/train.{src,trg}.gz | head -n 4
-<|im_start|>user
-Translate into Finnish: You're not helping, grace.<|im_end|>
-<|im_start|>assistant
-- Et auta, Grace.<|im_end|>
+{"text": "<|im_start|>user\nKäännä englanniksi: - Et auta, Grace.<|im_end|>\n<|im_start|>assistant\nYou're not helping, grace.<|im_end|>\n"}
 ```
